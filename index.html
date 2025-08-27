@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive CV</title>
+    <title>Your Profile: Assistant Systems Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Professional -->
-    <!-- Application Structure Plan: The application is structured as a single-page narrative portfolio to guide a recruiter's focus. It starts with a summary (Hero), moves to interactive "Key Strengths" cards that directly address job requirements, then a "Filterable Experience" section to connect technical projects to administrative skills, a "Visual Skills Chart" for impactful comparison, and finally a clean "Education & Certifications" section. This non-linear, interactive structure was chosen over a simple linear CV to proactively demonstrate the candidate's suitability by highlighting transferable skills and making the connections to the role's needs explicit and engaging. -->
-    <!-- Visualization & Content Choices: Summary -> Goal: Inform -> Presentation: Hero Text -> Interaction: None -> Justification: Clear first impression. | Key Strengths -> Goal: Persuade -> Presentation: Interactive HTML Cards -> Interaction: Click to reveal details -> Justification: Focuses on core job competencies. | Experience -> Goal: Relate/Organize -> Presentation: Filterable HTML Cards -> Interaction: Click tags to filter projects -> Justification: Connects technical history to administrative tasks. | Skills -> Goal: Compare -> Presentation: Radar Chart -> Interaction: Hover tooltips -> Justification: Visually compelling and breaks up text. | Education -> Goal: Inform -> Presentation: Timeline-like HTML list -> Interaction: None -> Justification: Simple, clear data presentation. All implemented with HTML/Tailwind and Chart.js. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Amey's Brand (Amber & Grey) -->
+    <!-- Application Structure Plan: The single-page application is designed as an interactive portfolio. It starts with a strong personal statement, followed by a data visualization that directly maps the user's skills to the job requirements. The core of the app is a series of interactive project cards that detail the user's experience in a way that directly addresses the job description's requirements. A final section lists education and certifications. This structure directly argues the user's candidacy by presenting their profile through the lens of the job description. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: User's Skills vs. Job Req's -> Goal: Compare/Inform -> Viz/Presentation: Horizontal Bar Chart (Chart.js/Canvas) -> Interaction: Static, but highly communicative -> Justification: A horizontal bar chart provides a clear, scannable overview of skill proficiencies, making it easy to compare and immediately grasp the candidate's strongest areas.
+        - Report Info: User's Projects -> Goal: Inform/Organize -> Viz/Presentation: Interactive accordion/card list (HTML/CSS/JS) -> Interaction: Click to expand details -> Justification: Breaks down complex project descriptions into manageable, engaging blocks, allowing the user (and recruiter) to drill down into the details most relevant to the role's responsibilities.
+        - Report Info: Education & Certifications -> Goal: Inform -> Viz/Presentation: Simple lists -> Interaction: Static -> Justification: A clean, clear presentation of credentials for quick reference.
+    -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FDFBF8;
-            color: #3F3D56;
+            background-color: #fdfcfb;
+            color: #333;
         }
         .chart-container {
             position: relative;
@@ -25,298 +29,183 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
+            height: 400px;
             max-height: 400px;
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 400px;
-            }
-        }
-        .skill-card-details {
+        .project-item .details {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s ease-in-out;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
         }
-        .skill-card.active .skill-card-details {
+        .project-item.open .details {
             max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
         }
-        .tag {
-            transition: all 0.3s ease;
+        .project-item .icon {
+            transition: transform 0.5s ease;
         }
-        .experience-card {
-            transition: all 0.5s ease;
-            will-change: transform, opacity;
+        .project-item.open .icon {
+            transform: rotate(45deg);
         }
     </style>
 </head>
 <body class="antialiased">
 
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-[#3F3D56]">Chukwuka Nwabueze</div>
-            <div class="hidden md:flex space-x-8">
-                <a href="#strengths" class="text-gray-600 hover:text-[#5A5580] transition">Key Strengths</a>
-                <a href="#experience" class="text-gray-600 hover:text-[#5A5580] transition">Experience</a>
-                <a href="#skills" class="text-gray-600 hover:text-[#5A5580] transition">Skills</a>
-                <a href="#education" class="text-gray-600 hover:text-[#5A5580] transition">Education</a>
-            </div>
-        </nav>
-    </header>
+    <main class="container mx-auto px-6 py-12 md:py-20">
 
-    <main class="container mx-auto px-6 py-12">
-
-        <section id="summary" class="text-center mb-20">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-[#3F3D56]">Customer Service Administrator</h1>
-            <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-700">
-                Highly organised and proactive professional with a strong aptitude for problem-solving and a passion for delivering exceptional support. Bringing a solid foundation in project coordination, data management, and clear communication, honed through diverse technical and collaborative projects. Eager to apply meticulous administrative skills and a customer-centric approach to effectively serve students and support operations in a dynamic office environment.
-            </p>
-        </section>
-
-        <section id="strengths" class="mb-20">
-            <h2 class="text-3xl font-bold text-center mb-2 text-[#3F3D56]">Key Strengths</h2>
-            <p class="text-center text-gray-600 mb-10">Click on a card to see relevant examples from my experience.</p>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="skill-card bg-white p-6 rounded-lg shadow-lg cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skill="problem-solving">
-                    <h3 class="text-xl font-bold mb-2 text-[#5A5580]">Proactive Problem Solving</h3>
-                    <p class="text-gray-600 mb-4">Adept at identifying issues and implementing effective solutions to ensure smooth operations.</p>
-                    <div class="skill-card-details">
-                        <ul class="list-disc list-inside text-gray-600 mt-4 space-y-2">
-                            <li>Troubleshot and resolved technical issues, showcasing strong analytical capabilities.</li>
-                            <li>Developed and maintained software solutions, demonstrating attention to detail in addressing user needs.</li>
-                            <li>Refined system functionality based on user feedback, highlighting adaptability.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="skill-card bg-white p-6 rounded-lg shadow-lg cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skill="organization">
-                    <h3 class="text-xl font-bold mb-2 text-[#5A5580]">Strong Organisational Skills</h3>
-                    <p class="text-gray-600 mb-4">Efficiently managing tasks, deadlines, and resources to achieve project goals.</p>
-                    <div class="skill-card-details">
-                        <ul class="list-disc list-inside text-gray-600 mt-4 space-y-2">
-                            <li>Managed end-to-end project lifecycles, ensuring timely delivery.</li>
-                            <li>Coordinated project tasks and managed deadlines within a team.</li>
-                            <li>Maintained organised project documentation and managed resources efficiently.</li>
-                            <li>Designed robust data management systems, demonstrating careful record-keeping.</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="skill-card bg-white p-6 rounded-lg shadow-lg cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-skill="communication">
-                    <h3 class="text-xl font-bold mb-2 text-[#5A5580]">Exceptional Communication</h3>
-                    <p class="text-gray-600 mb-4">Clearly conveying information and collaborating effectively with clients and team members.</p>
-                    <div class="skill-card-details">
-                        <ul class="list-disc list-inside text-gray-600 mt-4 space-y-2">
-                            <li>Collaborated closely with clients to understand requirements and provide clear guidance.</li>
-                            <li>Acted as a primary point of contact for project-related queries within team settings.</li>
-                            <li>Gathered requirements and managed user feedback, ensuring stakeholder alignment.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="experience" class="mb-20">
-            <h2 class="text-3xl font-bold text-center mb-2 text-[#3F3D56]">Experience Deep Dive</h2>
-            <p class="text-center text-gray-600 mb-10">Filter my experience by the skills they demonstrate.</p>
-            <div id="filter-tags" class="flex justify-center flex-wrap gap-3 mb-10">
-                <button class="tag bg-gray-200 text-gray-800 px-4 py-2 rounded-full hover:bg-[#A9A3D3] hover:text-white" data-filter="all">All</button>
-                <button class="tag bg-gray-200 text-gray-800 px-4 py-2 rounded-full hover:bg-[#A9A3D3] hover:text-white" data-filter="coordination">Project Coordination</button>
-                <button class="tag bg-gray-200 text-gray-800 px-4 py-2 rounded-full hover:bg-[#A9A3D3] hover:text-white" data-filter="data">Data Management</button>
-                <button class="tag bg-gray-200 text-gray-800 px-4 py-2 rounded-full hover:bg-[#A9A3D3] hover:text-white" data-filter="client">Client Communication</button>
-            </div>
-
-            <div id="experience-container" class="space-y-8">
-                <div class="experience-card bg-white p-6 rounded-lg shadow-md" data-tags='["coordination", "client"]'>
-                    <h3 class="text-xl font-bold text-[#5A5580]">Freelance Software Developer</h3>
-                    <p class="text-gray-500 mb-4">Remote | Start Date – Present</p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2">
-                        <li>Managed end-to-end project lifecycles, ensuring timely delivery and stakeholder satisfaction.</li>
-                        <li>Collaborated closely with clients to understand requirements, providing clear communication and technical guidance.</li>
-                        <li>Developed and maintained software solutions, demonstrating strong problem-solving and attention to detail in addressing user needs.</li>
-                    </ul>
-                </div>
-                <div class="experience-card bg-white p-6 rounded-lg shadow-md" data-tags='["coordination", "data"]'>
-                    <h3 class="text-xl font-bold text-[#5A5580]">University Group Projects</h3>
-                    <p class="text-gray-500 mb-4">University of Buckingham / University of Kent</p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2">
-                        <li><b>MyPath Web App:</b> Coordinated project tasks and managed deadlines within a team.</li>
-                        <li><b>Feelings Tracker App:</b> Designed and implemented a robust data management system, demonstrating careful record-keeping.</li>
-                        <li><b>EcoTrack:</b> Collaborated with team members to gather requirements and manage user feedback.</li>
-                        <li>Acted as a primary point of contact for project-related queries within team settings.</li>
-                    </ul>
-                </div>
-                <div class="experience-card bg-white p-6 rounded-lg shadow-md" data-tags='["data"]'>
-                    <h3 class="text-xl font-bold text-[#5A5580]">Arduino-Based Engineering Projects</h3>
-                    <p class="text-gray-500 mb-4">University of Kent</p>
-                    <ul class="list-disc list-inside text-gray-600 space-y-2">
-                        <li>Executed practical engineering tasks, demonstrating meticulous attention to detail.</li>
-                        <li>Troubleshot and resolved technical issues, showcasing strong analytical and problem-solving capabilities.</li>
-                        <li>Documented project progress and technical specifications, ensuring accurate record-keeping.</li>
-                    </ul>
-                </div>
-            </div>
+        <section class="text-center mb-20">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-4">Chukwuka's Profile for Amey</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">This interactive portfolio demonstrates my qualifications for the Assistant Systems Engineer position, highlighting how my background aligns with the role's requirements in technology, engineering, and innovation.</p>
         </section>
 
         <section id="skills" class="mb-20">
-            <h2 class="text-3xl font-bold text-center mb-2 text-[#3F3D56]">Skills Breakdown</h2>
-            <p class="text-center text-gray-600 mb-10">A visual overview of my administrative and customer service competencies.</p>
-            <div class="bg-white p-6 rounded-lg shadow-lg">
-                <div class="chart-container">
-                    <canvas id="skillsChart"></canvas>
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Mapping My Skills to Your Needs</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">This bar chart visually represents how my diverse skill set directly addresses the essential and desirable qualities outlined in the job description.</p>
+            <div class="chart-container">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+        <section id="projects" class="mb-20">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Key Projects & Experience</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">My hands-on experience in these projects has equipped me with a strong understanding of the systems engineering lifecycle, from requirements management to product validation.</p>
+            <div class="space-y-4 max-w-4xl mx-auto" id="projects-container">
+                <div class="project-item bg-white border border-gray-200 rounded-lg">
+                    <button class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-700">
+                        MyPath Web Application
+                        <span class="icon text-amber-600 text-2xl font-light">+</span>
+                    </button>
+                    <div class="details px-5 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><b>Requirements Management:</b> Managed the full development lifecycle, working with stakeholders to establish and document core requirements.</li>
+                            <li><b>System Design:</b> Designed a user-centric web application from the ground up, translating specifications into a functional and effective solution.</li>
+                            <li><b>Technologies:</b> Built using Django and Angular, demonstrating skills in modern web development frameworks and systems integration.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="project-item bg-white border border-gray-200 rounded-lg">
+                    <button class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-700">
+                        Feelings Tracker App
+                        <span class="icon text-amber-600 text-2xl font-light">+</span>
+                    </button>
+                    <div class="details px-5 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><b>Problem-Solving:</b> Developed a secure, cross-platform mobile app using <b>.NET MAUI</b> and <b>SQLite</b>.</li>
+                            <li><b>Cyber Security:</b> Implemented secure data handling with <b>BCrypt</b> for password hashing, showcasing an interest in cybersecurity principles.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="project-item bg-white border border-gray-200 rounded-lg">
+                    <button class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-700">
+                        EcoTrack – Carbon Footprint Tracker
+                        <span class="icon text-amber-600 text-2xl font-light">+</span>
+                    </button>
+                    <div class="details px-5 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><b>Analytical Thinking:</b> Transformed complex environmental data into a clear and usable format, requiring creative and abstract thinking to develop a user-friendly solution.</li>
+                            <li><b>Product Validation:</b> The project's success depended on its ability to provide clear, actionable insights, validating the design's effectiveness.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="project-item bg-white border border-gray-200 rounded-lg">
+                    <button class="w-full flex justify-between items-center p-5 text-left font-semibold text-gray-700">
+                        Arduino Engineering Projects
+                        <span class="icon text-amber-600 text-2xl font-light">+</span>
+                    </button>
+                    <div class="details px-5 text-gray-600">
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><b>Practical Experience:</b> Engaged in hands-on engineering projects that built foundational knowledge in hardware, sensors, and basic systems.</li>
+                            <li><b>Independent Learning:</b> This personal exploration demonstrates a proactive and self-motivated interest in engineering and operational technology.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="education" class="mb-12">
-            <h2 class="text-3xl font-bold text-center mb-10 text-[#3F3D56]">Education & Certifications</h2>
-            <div class="grid md:grid-cols-2 gap-12">
+        <section id="education" class="mb-20">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Education & Certifications</h2>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
                 <div>
-                    <h3 class="text-2xl font-bold mb-4 text-[#5A5580]">Education</h3>
-                    <div class="relative border-l-2 border-[#A9A3D3] pl-6 space-y-8">
-                        <div class="absolute -left-2 top-1 w-4 h-4 bg-[#5A5580] rounded-full"></div>
-                        <div>
-                            <h4 class="font-bold text-lg">BSc in Computing (2:1)</h4>
-                            <p class="text-gray-600">University of Buckingham, UK</p>
-                        </div>
-                        <div class="absolute -left-2 top-24 w-4 h-4 bg-[#5A5580] rounded-full"></div>
-                        <div>
-                            <h4 class="font-bold text-lg">Engineering Certificate</h4>
-                            <p class="text-gray-600">University of Kent, UK</p>
-                        </div>
-                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-700 mb-6">Education</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start"><span class="text-amber-500 mr-3 mt-1">🎓</span><span><b>BSc Computing (2:1)</b> - University of Buckingham</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-3 mt-1">📜</span><span><b>Engineering Certificate</b> - University of Kent</span></li>
+                    </ul>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold mb-4 text-[#5A5580]">Certifications</h3>
-                    <ul class="space-y-3">
-                        <li class="flex items-center">
-                            <span class="text-[#5A5580] mr-2">✔</span>
-                            <span class="text-gray-700">DATACom Software Development Job Simulation</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-[#5A5580] mr-2">✔</span>
-                            <span class="text-gray-700">Wells Fargo - Software Engineering Job Simulation</span>
-                        </li>
-                        <li class="flex items-center">
-                            <span class="text-[#5A5580] mr-2">✔</span>
-                            <span class="text-gray-700">JPMorgan Chase & Co. - Software Engineering Lite</span>
-                        </li>
+                    <h3 class="text-2xl font-semibold text-gray-700 mb-6">Certifications</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start"><span class="text-blue-500 mr-3 mt-1">💼</span><span>DATACom Software Development Job Simulation</span></li>
+                        <li class="flex items-start"><span class="text-blue-500 mr-3 mt-1">💼</span><span>Wells Fargo - Software Engineering Job Simulation</span></li>
+                        <li class="flex items-start"><span class="text-blue-500 mr-3 mt-1">💼</span><span>JPMorgan Chase & Co. - Software Engineering Lite Job Simulation</span></li>
                     </ul>
                 </div>
             </div>
         </section>
+
     </main>
-
-    <footer class="bg-gray-100 mt-12">
-        <div class="container mx-auto px-6 py-8 text-center text-gray-600">
-            <p>Chukwuka Nwabueze | +447918574093 | <a href="mailto:ChukaDili08@outlook.com" class="text-[#5A5580] hover:underline">ChukaDili08@outlook.com</a></p>
-            <p class="mt-2 text-sm">Interactive CV designed to highlight key administrative strengths.</p>
-        </div>
-    </footer>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
-            const skillCards = document.querySelectorAll('.skill-card');
-            skillCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    card.classList.toggle('active');
-                });
+            const projectsContainer = document.getElementById('projects-container');
+            projectsContainer.addEventListener('click', function(e) {
+                const button = e.target.closest('button');
+                if (button) {
+                    const item = button.parentElement;
+                    item.classList.toggle('open');
+                }
             });
 
-            const filterTags = document.querySelectorAll('#filter-tags .tag');
-            const experienceCards = document.querySelectorAll('#experience-container .experience-card');
-            let activeFilter = 'all';
-
-            filterTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    activeFilter = tag.dataset.filter;
-                    
-                    filterTags.forEach(t => {
-                        t.classList.remove('bg-[#A9A3D3]', 'text-white');
-                        t.classList.add('bg-gray-200', 'text-gray-800');
-                    });
-                    tag.classList.add('bg-[#A9A3D3]', 'text-white');
-                    tag.classList.remove('bg-gray-200', 'text-gray-800');
-
-                    experienceCards.forEach(card => {
-                        const cardTags = JSON.parse(card.dataset.tags);
-                        const shouldShow = activeFilter === 'all' || cardTags.includes(activeFilter);
-                        
-                        if (shouldShow) {
-                            card.style.opacity = '1';
-                            card.style.transform = 'scale(1)';
-                            card.style.maxHeight = '500px';
-                            card.style.padding = '1.5rem';
-                            card.style.marginBottom = '2rem';
-                            card.style.pointerEvents = 'auto';
-                        } else {
-                            card.style.opacity = '0';
-                            card.style.transform = 'scale(0.9)';
-                            card.style.maxHeight = '0';
-                            card.style.padding = '0';
-                            card.style.marginBottom = '0';
-                            card.style.pointerEvents = 'none';
-                        }
-                    });
-                });
-            });
+            const skillsData = {
+                labels: ['Systems Understanding', 'Analytical Skills', 'Adaptability', 'Communication', 'Technical Literacy', 'Requirements Gathering'],
+                datasets: [{
+                    label: 'My Skills',
+                    data: [8, 9, 8.5, 8, 10, 9],
+                    backgroundColor: 'rgba(217, 119, 6, 0.7)',
+                    borderColor: 'rgba(217, 119, 6, 1)',
+                    borderWidth: 1,
+                }]
+            };
 
             const ctx = document.getElementById('skillsChart').getContext('2d');
             const skillsChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: [
-                        'Communication', 
-                        'Problem Solving', 
-                        'Organisation', 
-                        'Time Management', 
-                        'Record Keeping', 
-                        'Coordination'
-                    ],
-                    datasets: [{
-                        label: 'Administrative & Customer Service Skills',
-                        data: [9, 8, 9, 8, 9, 7],
-                        backgroundColor: 'rgba(169, 163, 211, 0.2)',
-                        borderColor: 'rgba(90, 85, 128, 1)',
-                        pointBackgroundColor: 'rgba(90, 85, 128, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(90, 85, 128, 1)'
-                    }]
-                },
+                type: 'bar',
+                data: skillsData,
                 options: {
+                    indexAxis: 'y', // This makes it a horizontal bar chart
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        r: {
-                            angleLines: {
-                                color: 'rgba(63, 61, 86, 0.2)'
+                        x: {
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                color: '#666'
                             },
                             grid: {
-                                color: 'rgba(63, 61, 86, 0.2)'
-                            },
-                            pointLabels: {
-                                font: {
-                                    size: 14,
-                                    family: 'Inter'
-                                },
-                                color: '#3F3D56'
-                            },
+                                color: 'rgba(209, 213, 219, 0.5)'
+                            }
+                        },
+                        y: {
                             ticks: {
-                                backdropColor: '#FDFBF8',
-                                color: '#5A5580',
-                                stepSize: 2
+                                color: '#333'
                             },
-                            suggestedMin: 0,
-                            suggestedMax: 10
+                            grid: {
+                                color: 'rgba(209, 213, 219, 0.5)'
+                            }
                         }
                     },
                     plugins: {
                         legend: {
-                            position: 'top',
-                             labels: {
-                                font: {
-                                    size: 14,
-                                    family: 'Inter'
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}/10`;
                                 }
                             }
                         }
